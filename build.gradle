@@ -1,0 +1,25 @@
+apply plugin: 'scala'
+
+sourceCompatibility='1.8'
+version = '1.0'
+ext {
+    flinkVersion = "1.0.0"
+    scalaVersion = "2.11"
+}
+
+repositories{
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies{
+    compile "org.scala-lang:scala-library:2.11.8"
+    compile "org.scala-lang:scala-compiler:2.11.8"
+
+    compile "org.apache.flink:flink-core:${flinkVersion}"
+    compile "org.apache.flink:flink-scala_${scalaVersion}:${flinkVersion}"
+    compile "org.apache.flink:flink-streaming-scala_${scalaVersion}:${flinkVersion}"
+
+    compile "org.pcap4j:pcap4j-core:1.6.4"
+    compile "org.pcap4j:pcap4j-packetfactory-static:1.6.4"
+}
