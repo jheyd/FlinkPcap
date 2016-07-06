@@ -22,4 +22,6 @@ dependencies{
 
     compile "org.pcap4j:pcap4j-core:1.6.4"
     compile "org.pcap4j:pcap4j-packetfactory-static:1.6.4"
+
+    compile files('lib/jnetpcap.jar')
 }
