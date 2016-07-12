@@ -1,7 +1,7 @@
 package pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.scala.ExecutionEnvironment
+import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
 import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet}
 
@@ -19,12 +19,15 @@ object FlinkPcap {
     val filename = args(0)
     val packetCount = args(1).toInt
 
-    analysePackets(filename, packetCount)
-  }
-
-  def analysePackets(filename: String, packetCount: Int): Unit = {
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
+
+    val totalSizesBySrcIp = analysePackets(ethernetPackets)
+
+    totalSizesBySrcIp.print()
+  }
+
+  def analysePackets(ethernetPackets: DataSet[Array[Byte]]): DataSet[(String, Int)] = {
     val ipPackets = ethernetPackets.map(extractRawIpPacket(_))
     val grouped = ipPackets.groupBy(srcIp(_))
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
@@ -36,7 +39,7 @@ object FlinkPcap {
       })
       (addr, length)
     })
-    totalSizesBySrcIp.print()
+    totalSizesBySrcIp
   }
 
   def readPacketsFromFile(filename: String, packetCount: Int): Seq[Array[Byte]] = {
