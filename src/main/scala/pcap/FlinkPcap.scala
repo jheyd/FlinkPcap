@@ -21,7 +21,13 @@ object FlinkPcap {
 
   def main(args: Array[String]) {
     val filename = args(0)
-    val packetList = readPacketsFromFile(filename, args(1).toInt)
+    val packetCount = args(1).toInt
+
+    analysePackets(filename, packetCount)
+  }
+
+  def analysePackets(filename: String, packetCount: Int): Unit = {
+    val packetList = readPacketsFromFile(filename, packetCount)
     val packets = env.fromCollection(packetList)
     val keyedPackets = packets.groupBy(srcIp(_))
     val totalSizesByKey = keyedPackets.reduceGroup(iterator => {
