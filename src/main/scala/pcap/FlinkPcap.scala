@@ -17,12 +17,20 @@ object FlinkPcap {
 
   def main(args: Array[String]) {
     val filename = args(0)
-    val packetCount = args(1).toInt
+    val analysis = args(1) match {
+      case "bytesPerDestIp" => new BytesPerDestIpAnalyser
+      case "bytesPerSrcIp" => new BytesPerSrcIpAnalyser
+      case _ => {
+        println("unknown analysis")
+        return
+      }
+    }
+    val packetCount = args(2).toInt
 
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
 
-    val totalSizesBySrcIp = analysePackets(ethernetPackets, new BytesPerSrcIpAnalyser)
+    val totalSizesBySrcIp = analysePackets(ethernetPackets, analysis)
 
     totalSizesBySrcIp.print()
   }
