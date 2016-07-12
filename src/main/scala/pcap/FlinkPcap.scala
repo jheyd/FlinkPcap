@@ -38,9 +38,13 @@ object FlinkPcap {
   def readPacketsFromFile(filename: String): Seq[Array[Byte]] = {
     val handle = Pcaps.openOffline(filename)
     val packetBuffer = mutable.Buffer[Array[Byte]]()
-    val listener = new RawPacketListener {
-      override def gotPacket(packetBytes: Array[Byte]): Unit = {
-        packetBuffer += EthernetPacket.newPacket(packetBytes, 0, packetBytes.length).getPayload.getRawData
+    val listener = new PacketListener {
+      override def gotPacket(packet: Packet): Unit = {
+        val ethernetPacket = packet match {
+          case eth: EthernetPacket => eth
+          case other: Any => throw new ClassCastException("Top level packet is not an EthernetPacket. Actual: " + other.getClass)
+        }
+        packetBuffer += ethernetPacket.getPayload.getRawData
       }
     }
     handle.dispatch(10000, listener)
