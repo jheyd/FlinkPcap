@@ -1,6 +1,7 @@
 package pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
 
@@ -16,8 +17,9 @@ object FlinkPcap {
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
   def main(args: Array[String]) {
-    val filename = args(0)
-    val analysis = args(1) match {
+    def params = ParameterTool.fromArgs(args)
+    val filename = params.getRequired("inputFile")
+    val analysis = params.getRequired("analysis") match {
       case "bytesPerDestIp" => new BytesPerDestIpAnalyser
       case "bytesPerSrcIp" => new BytesPerSrcIpAnalyser
       case _ => {
@@ -25,7 +27,9 @@ object FlinkPcap {
         return
       }
     }
-    val packetCount = args(2).toInt
+
+    // read whole file by default
+    val packetCount = params.getInt("packetCount", -1)
 
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
