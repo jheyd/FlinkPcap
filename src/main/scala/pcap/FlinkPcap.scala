@@ -17,7 +17,7 @@ object FlinkPcap {
   implicit val typeInfo3 = TypeInformation.of(classOf[(String, Int)])
 
   def main(args: Array[String]) {
-    val filename = "src/test/resources/200610041400.dump"
+    val filename = args(0)
     val packetList = readPacketsFromFile(filename)
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     val packets = env.fromCollection(packetList)
