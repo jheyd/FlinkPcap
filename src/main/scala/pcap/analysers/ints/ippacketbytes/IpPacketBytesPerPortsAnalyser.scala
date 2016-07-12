@@ -12,11 +12,11 @@ class IpPacketBytesPerPortsAnalyser extends IpPacketBytesPerKeyAnalyser{
       ipPacket.getPayload match {
         case tcp: TcpPacket => {
           val header = tcp.getHeader
-          header.getSrcPort.value() + " -> " + header.getDstPort.value()
+          header.getSrcPort.valueAsInt() + " -> " + header.getDstPort.valueAsInt()
         }
         case udp: UdpPacket => {
           val header = udp.getHeader
-          header.getSrcPort.value() + " -> " + header.getDstPort.value()
+          header.getSrcPort.valueAsInt() + " -> " + header.getDstPort.valueAsInt()
         }
         case _ => "no port information available"
       }
