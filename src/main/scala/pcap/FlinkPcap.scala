@@ -6,7 +6,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.pcap4j.core.{PacketListener, Pcaps, RawPacketListener}
 import org.pcap4j.packet.factory.PacketFactory
-import org.pcap4j.packet.{IpV4Packet, Packet}
+import org.pcap4j.packet.{EthernetPacket, IpV4Packet, Packet}
 
 import scala.collection.mutable
 
@@ -38,7 +38,7 @@ object FlinkPcap {
     val packetBuffer = mutable.Buffer[Array[Byte]]()
     val listener = new RawPacketListener {
       override def gotPacket(packetBytes: Array[Byte]): Unit = {
-        packetBuffer += packetBytes
+        packetBuffer += EthernetPacket.newPacket(packetBytes, 0, packetBytes.length).getPayload.getRawData
       }
     }
     handle.dispatch(10000, listener)
