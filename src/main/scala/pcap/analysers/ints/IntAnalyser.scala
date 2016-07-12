@@ -1,4 +1,4 @@
-package pcap
+package pcap.analysers.ints
 
 trait IntAnalyser extends Serializable {
   def key(rawEthernetPacket: Array[Byte]): String

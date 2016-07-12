@@ -1,4 +1,4 @@
-package pcap
+package pcap.analysers.ints.ippacketbytes
 
 import org.pcap4j.packet.{IllegalRawDataException, IpV4Packet, TcpPacket, UdpPacket}
 

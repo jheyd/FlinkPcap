@@ -1,6 +1,7 @@
-package pcap
+package pcap.analysers.ints.ippacketbytes
 
 import org.pcap4j.packet.EthernetPacket
+import pcap.analysers.ints.IntAnalyser
 
 trait IpPacketBytesPerKeyAnalyser extends IntAnalyser{
 

@@ -4,6 +4,8 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
+import pcap.analysers.ints.ippacketbytes.{IpPacketBytesPerDestIpAnalyser, IpPacketBytesPerPortsAnalyser, IpPacketBytesPerSrcIpAnalyser}
+import pcap.analysers.ints.IntAnalyser
 
 import scala.collection.mutable
 

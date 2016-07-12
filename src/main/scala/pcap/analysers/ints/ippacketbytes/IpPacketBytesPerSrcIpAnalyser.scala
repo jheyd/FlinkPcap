@@ -1,6 +1,6 @@
-package pcap
+package pcap.analysers.ints.ippacketbytes
 
-import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet}
+import org.pcap4j.packet.{IllegalRawDataException, IpV4Packet}
 
 class IpPacketBytesPerSrcIpAnalyser extends IpPacketBytesPerKeyAnalyser {
   override def ipBasedKey(rawIpPacket: Array[Byte]): String = srcIp(rawIpPacket)
