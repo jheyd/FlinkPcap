@@ -6,7 +6,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.pcap4j.core.{PacketListener, Pcaps, RawPacketListener}
 import org.pcap4j.packet.factory.PacketFactory
-import org.pcap4j.packet.{EthernetPacket, IpV4Packet, Packet}
+import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet, Packet}
 
 import scala.collection.mutable
 
@@ -47,8 +47,12 @@ object FlinkPcap {
   }
 
   def srcIp(rawPacket: Array[Byte]): String = {
-    val ipPacket = IpV4Packet.newPacket(rawPacket, 0, rawPacket.length)
-    ipPacket.getHeader.getSrcAddr.getHostAddress
+    try {
+      val ipPacket = IpV4Packet.newPacket(rawPacket, 0, rawPacket.length)
+      ipPacket.getHeader.getSrcAddr.getHostAddress
+    } catch {
+      case e: IllegalRawDataException => e.getMessage
+    }
   }
 
 }
