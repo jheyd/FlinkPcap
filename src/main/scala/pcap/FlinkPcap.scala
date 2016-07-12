@@ -19,7 +19,7 @@ object FlinkPcap {
 
   def main(args: Array[String]) {
     val filename = args(0)
-    val packetList = readPacketsFromFile(filename)
+    val packetList = readPacketsFromFile(filename, args(1).toInt)
     val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
     val packets = env.fromCollection(packetList)
     val keyedPackets = packets.groupBy(srcIp(_))
@@ -35,7 +35,7 @@ object FlinkPcap {
     totalSizesByKey.print()
   }
 
-  def readPacketsFromFile(filename: String): Seq[Array[Byte]] = {
+  def readPacketsFromFile(filename: String, packetCount: Int): Seq[Array[Byte]] = {
     val handle = Pcaps.openOffline(filename)
     val packetBuffer = mutable.Buffer[Array[Byte]]()
     val listener = new PacketListener {
@@ -47,7 +47,7 @@ object FlinkPcap {
         packetBuffer += ethernetPacket.getPayload.getRawData
       }
     }
-    handle.dispatch(10000, listener)
+    handle.dispatch(packetCount, listener)
 
     packetBuffer.toSeq
   }
