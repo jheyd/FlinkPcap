@@ -20,8 +20,8 @@ object FlinkPcap {
     def params = ParameterTool.fromArgs(args)
     val filename = params.getRequired("inputFile")
     val analysis = params.getRequired("analysis") match {
-      case "bytesPerDestIp" => new BytesPerDestIpAnalyser
-      case "bytesPerSrcIp" => new BytesPerSrcIpAnalyser
+      case "bytesPerDestIp" => new IpPacketBytesPerDestIpAnalyser
+      case "bytesPerSrcIp" => new IpPacketBytesPerSrcIpAnalyser
       case _ => {
         println("unknown analysis")
         return

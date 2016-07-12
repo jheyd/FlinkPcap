@@ -2,13 +2,14 @@ package pcap
 
 import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet}
 
-class BytesPerSrcIpAnalyser extends IpPacketBytesPerKeyAnalyser {
-  override def ipBasedKey(rawIpPacket: Array[Byte]): String = srcIp(rawIpPacket)
+class IpPacketBytesPerDestIpAnalyser extends IpPacketBytesPerKeyAnalyser {
 
-  def srcIp(rawIpPacket: Array[Byte]): String = {
+  override def ipBasedKey(rawIpPacket: Array[Byte]): String = destIp(rawIpPacket)
+
+  def destIp(rawIpPacket: Array[Byte]): String = {
     try {
       val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
-      ipPacket.getHeader.getSrcAddr.getHostAddress
+      ipPacket.getHeader.getDstAddr.getHostAddress
     } catch {
       case e: IllegalRawDataException => e.getMessage
     }
