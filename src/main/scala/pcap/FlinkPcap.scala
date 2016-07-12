@@ -17,10 +17,11 @@ object FlinkPcap {
   implicit val typeInfo2 = TypeInformation.of(classOf[String])
   implicit val typeInfo3 = TypeInformation.of(classOf[(String, Int)])
 
+  val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
+
   def main(args: Array[String]) {
     val filename = args(0)
     val packetList = readPacketsFromFile(filename, args(1).toInt)
-    val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
     val packets = env.fromCollection(packetList)
     val keyedPackets = packets.groupBy(srcIp(_))
     val totalSizesByKey = keyedPackets.reduceGroup(iterator => {
