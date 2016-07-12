@@ -1,12 +1,8 @@
 package pcap
 
-import java.net.Inet4Address
-
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.ExecutionEnvironment
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.pcap4j.core.{PacketListener, Pcaps, RawPacketListener}
-import org.pcap4j.packet.factory.PacketFactory
+import org.pcap4j.core.{PacketListener, Pcaps}
 import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet, Packet}
 
 import scala.collection.mutable
