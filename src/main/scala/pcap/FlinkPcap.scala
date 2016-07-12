@@ -61,9 +61,9 @@ object FlinkPcap {
     rawIpPacket
   }
 
-  def srcIp(rawPacket: Array[Byte]): String = {
+  def srcIp(rawIpPacket: Array[Byte]): String = {
     try {
-      val ipPacket = IpV4Packet.newPacket(rawPacket, 0, rawPacket.length)
+      val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
       ipPacket.getHeader.getSrcAddr.getHostAddress
     } catch {
       case e: IllegalRawDataException => e.getMessage
