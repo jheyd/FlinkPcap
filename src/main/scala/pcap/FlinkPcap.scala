@@ -3,6 +3,7 @@ package pcap
 import java.net.Inet4Address
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
+import org.apache.flink.api.scala.ExecutionEnvironment
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.pcap4j.core.{PacketListener, Pcaps, RawPacketListener}
 import org.pcap4j.packet.factory.PacketFactory
@@ -19,18 +20,19 @@ object FlinkPcap {
   def main(args: Array[String]) {
     val filename = args(0)
     val packetList = readPacketsFromFile(filename)
-    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
     val packets = env.fromCollection(packetList)
-    val keyedPackets = packets.keyBy(srcIp(_))
-    val windowedPackets = keyedPackets.countWindow(100)
-    val totalSizesByKey = windowedPackets.fold(("", 0))((accumulator: (String, Int), value: Array[Byte]) => {
-      val addr = srcIp(value)
-      val newLength = accumulator._2 + value.length
-      (addr, newLength)
+    val keyedPackets = packets.groupBy(srcIp(_))
+    val totalSizesByKey = keyedPackets.reduceGroup(iterator => {
+      var addr = ""
+      var length = 0
+      iterator.foreach(packet => {
+        addr = srcIp(packet)
+        length += packet.length
+      })
+      (addr, length)
     })
     totalSizesByKey.print()
-
-    env.execute()
   }
 
   def readPacketsFromFile(filename: String): Seq[Array[Byte]] = {
