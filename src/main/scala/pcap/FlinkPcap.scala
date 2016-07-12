@@ -2,8 +2,8 @@ package pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.ExecutionEnvironment
-import org.pcap4j.core.{PacketListener, Pcaps}
-import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet, Packet}
+import org.pcap4j.core.{Pcaps, RawPacketListener}
+import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet}
 
 import scala.collection.mutable
 
@@ -24,8 +24,9 @@ object FlinkPcap {
 
   def analysePackets(filename: String, packetCount: Int): Unit = {
     val packetList = readPacketsFromFile(filename, packetCount)
-    val packets = env.fromCollection(packetList)
-    val grouped = packets.groupBy(srcIp(_))
+    val ethernetPackets = env.fromCollection(packetList)
+    val ipPackets = ethernetPackets.map(extractRawIpPacket(_))
+    val grouped = ipPackets.groupBy(srcIp(_))
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
       var addr = ""
       var length = 0
@@ -41,18 +42,20 @@ object FlinkPcap {
   def readPacketsFromFile(filename: String, packetCount: Int): Seq[Array[Byte]] = {
     val handle = Pcaps.openOffline(filename)
     val packetBuffer = mutable.Buffer[Array[Byte]]()
-    val listener = new PacketListener {
-      override def gotPacket(packet: Packet): Unit = {
-        val ethernetPacket = packet match {
-          case eth: EthernetPacket => eth
-          case other: Any => throw new ClassCastException("Top level packet is not an EthernetPacket. Actual: " + other.getClass)
-        }
-        packetBuffer += ethernetPacket.getPayload.getRawData
+    val listener = new RawPacketListener {
+      override def gotPacket(packetBytes: Array[Byte]): Unit = {
+        packetBuffer += packetBytes
       }
     }
     handle.dispatch(packetCount, listener)
 
     packetBuffer.toSeq
+  }
+
+  def extractRawIpPacket(rawEthernetPacket: Array[Byte]): Array[Byte] = {
+    val ethernetPacket = EthernetPacket.newPacket(rawEthernetPacket, 0, rawEthernetPacket.length)
+    val rawIpPacket = ethernetPacket.getPayload.getRawData
+    rawIpPacket
   }
 
   def srcIp(rawPacket: Array[Byte]): String = {
