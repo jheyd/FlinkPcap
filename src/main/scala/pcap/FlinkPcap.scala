@@ -47,7 +47,7 @@ object FlinkPcap {
   }
 
   def srcIp(rawPacket: Array[Byte]): String = {
-    val ipPacket = new IpV4Packet(rawPacket)
+    val ipPacket = IpV4Packet.newPacket(rawPacket, 0, rawPacket.length)
     ipPacket.getHeader.getSrcAddr.getHostAddress
   }
 
