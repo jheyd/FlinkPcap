@@ -22,6 +22,7 @@ object FlinkPcap {
     val analysis = params.getRequired("analysis") match {
       case "bytesPerDestIp" => new IpPacketBytesPerDestIpAnalyser
       case "bytesPerSrcIp" => new IpPacketBytesPerSrcIpAnalyser
+      case "bytesPerPorts" => new IpPacketBytesPerPortsAnalyser
       case _ => {
         println("unknown analysis")
         return
