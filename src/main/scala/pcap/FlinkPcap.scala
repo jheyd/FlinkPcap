@@ -3,7 +3,6 @@ package pcap
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
-import org.pcap4j.packet.{EthernetPacket, IllegalRawDataException, IpV4Packet}
 
 import scala.collection.mutable
 
@@ -12,6 +11,7 @@ object FlinkPcap {
   implicit val typeInfo1 = TypeInformation.of(classOf[Array[Byte]])
   implicit val typeInfo2 = TypeInformation.of(classOf[String])
   implicit val typeInfo3 = TypeInformation.of(classOf[(String, Int)])
+  implicit val typeInfo4 = TypeInformation.of(classOf[Int])
 
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
@@ -22,22 +22,22 @@ object FlinkPcap {
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
 
-    val totalSizesBySrcIp = analysePackets(ethernetPackets)
+    val totalSizesBySrcIp = analysePackets(ethernetPackets, new BytesPerSrcIpAnalyser)
 
     totalSizesBySrcIp.print()
   }
 
-  def analysePackets(ethernetPackets: DataSet[Array[Byte]]): DataSet[(String, Int)] = {
-    val ipPackets = ethernetPackets.map(extractRawIpPacket(_))
-    val grouped = ipPackets.groupBy(srcIp(_))
+  def analysePackets(ethernetPackets: DataSet[Array[Byte]], analyser: IntAnalyser): DataSet[(String, Int)] = {
+    val grouped = ethernetPackets.groupBy(analyser.key(_))
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
-      var addr = ""
-      var length = 0
-      iterator.foreach(packet => {
-        addr = srcIp(packet)
-        length += packet.length
-      })
-      (addr, length)
+      iterator
+        .map(packet => (analyser.key(packet), analyser.value(packet)))
+        .reduce((left, right) => {
+          val (leftKey, leftValue) = left
+          val (_, rightValue) = right
+          val aggregate = analyser.aggregate(leftValue, rightValue)
+          (leftKey, aggregate)
+        })
     })
     totalSizesBySrcIp
   }
@@ -53,21 +53,6 @@ object FlinkPcap {
     handle.dispatch(packetCount, listener)
 
     packetBuffer.toSeq
-  }
-
-  def extractRawIpPacket(rawEthernetPacket: Array[Byte]): Array[Byte] = {
-    val ethernetPacket = EthernetPacket.newPacket(rawEthernetPacket, 0, rawEthernetPacket.length)
-    val rawIpPacket = ethernetPacket.getPayload.getRawData
-    rawIpPacket
-  }
-
-  def srcIp(rawIpPacket: Array[Byte]): String = {
-    try {
-      val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
-      ipPacket.getHeader.getSrcAddr.getHostAddress
-    } catch {
-      case e: IllegalRawDataException => e.getMessage
-    }
   }
 
 }
