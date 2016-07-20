@@ -1,5 +1,6 @@
 package pcap
 
+import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
 import pcap.analysers.ints.IntAnalyser
 import pcap.analysers.ints.ippacketbytes.{IpPacketBytesPerDestIpAnalyser, IpPacketBytesPerPortsAnalyser, IpPacketBytesPerSrcIpAnalyser}
@@ -9,6 +10,8 @@ object Params {
 }
 
 class Params(parameterTool: ParameterTool) {
+  implicit val typeInfo = TypeInformation.of(classOf[Int])
+
   def inputFile: String = parameterTool.getRequired("inputFile")
 
   def analysis: IntAnalyser = parameterTool.getRequired("analysis") match {
