@@ -19,20 +19,17 @@ object FlinkPcap {
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
   def main(args: Array[String]) {
-    def params = ParameterTool.fromArgs(args)
-    val filename = params.getRequired("inputFile")
-    val analysis = params.getRequired("analysis") match {
-      case "bytesPerDestIp" => new IpPacketBytesPerDestIpAnalyser
-      case "bytesPerSrcIp" => new IpPacketBytesPerSrcIpAnalyser
-      case "bytesPerPorts" => new IpPacketBytesPerPortsAnalyser
-      case _ => {
+    def params = Params.fromArgs(args)
+    val filename = params.inputFile
+    val packetCount = params.packetCount
+    val analysis = try {
+      params.analysis
+    } catch {
+      case e: UnknownAnalysisException => {
         println("unknown analysis")
         return
       }
     }
-
-    // read whole file by default
-    val packetCount = params.getInt("packetCount", -1)
 
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
