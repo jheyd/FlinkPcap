@@ -2,7 +2,7 @@ package pcap.analysers.ints.ippacketbytes
 
 import org.pcap4j.packet.{IllegalRawDataException, IpV4Packet, TcpPacket, UdpPacket}
 
-class IpPacketBytesPerPortsAnalyser extends IpPacketBytesPerKeyAnalyser{
+class IpPacketBytesPerPortsAnalyser extends IpPacketBytesPerKeyAnalyser {
 
   override def ipBasedKey(rawIpPacket: Array[Byte]): String = ports(rawIpPacket)
 

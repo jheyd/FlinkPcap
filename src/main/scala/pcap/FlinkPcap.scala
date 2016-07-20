@@ -1,12 +1,9 @@
 package pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
 import pcap.analysers.Analyser
-import pcap.analysers.ints.ippacketbytes.{IpPacketBytesPerDestIpAnalyser, IpPacketBytesPerPortsAnalyser, IpPacketBytesPerSrcIpAnalyser}
-import pcap.analysers.ints.IntAnalyser
 
 import scala.collection.mutable
 
@@ -40,7 +37,7 @@ object FlinkPcap {
     totalSizesBySrcIp.print()
   }
 
-  def analysePackets[T:TypeInformation](ethernetPackets: DataSet[Array[Byte]], analyser: Analyser[T]): DataSet[(String, T)] = {
+  def analysePackets[T: TypeInformation](ethernetPackets: DataSet[Array[Byte]], analyser: Analyser[T]): DataSet[(String, T)] = {
     val grouped = ethernetPackets.groupBy(analyser.key(_))
     implicit val typeInfo5 = TypeInformation.of(classOf[(String, T)])
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
