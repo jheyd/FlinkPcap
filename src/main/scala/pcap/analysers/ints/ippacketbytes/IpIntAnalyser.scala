@@ -1,9 +1,9 @@
 package pcap.analysers.ints.ippacketbytes
 
 import org.pcap4j.packet.EthernetPacket
-import pcap.analysers.ints.IntAnalyser
+import pcap.analysers.Analyser
 
-trait IpIntAnalyser extends IntAnalyser {
+trait IpIntAnalyser extends Analyser[Int] {
 
   def ipBasedKey(rawIpPacket: Array[Byte]): String
 
