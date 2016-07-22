@@ -8,18 +8,8 @@ class IpPacketBytesPerPortsAnalyser extends IpPacketBytesPerKeyAnalyser {
 
   def ports(rawIpPacket: Array[Byte]): String = {
     try {
-      val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
-      ipPacket.getPayload match {
-        case tcp: TcpPacket => {
-          val header = tcp.getHeader
-          header.getSrcPort.valueAsInt() + " -> " + header.getDstPort.valueAsInt()
-        }
-        case udp: UdpPacket => {
-          val header = udp.getHeader
-          header.getSrcPort.valueAsInt() + " -> " + header.getDstPort.valueAsInt()
-        }
-        case _ => "no port information available"
-      }
+      new MyIpPacket(rawIpPacket).getPorts
+        .getOrElse("no port information available")
     } catch {
       case e: IllegalRawDataException => e.getMessage
     }

@@ -7,8 +7,7 @@ class IpPacketBytesPerSrcIpAnalyser extends IpPacketBytesPerKeyAnalyser {
 
   def srcIp(rawIpPacket: Array[Byte]): String = {
     try {
-      val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
-      ipPacket.getHeader.getSrcAddr.getHostAddress
+      new MyIpPacket(rawIpPacket).getSrcIp
     } catch {
       case e: IllegalRawDataException => e.getMessage
     }

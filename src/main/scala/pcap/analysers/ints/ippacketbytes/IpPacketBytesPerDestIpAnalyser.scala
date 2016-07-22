@@ -8,8 +8,7 @@ class IpPacketBytesPerDestIpAnalyser extends IpPacketBytesPerKeyAnalyser {
 
   def destIp(rawIpPacket: Array[Byte]): String = {
     try {
-      val ipPacket = IpV4Packet.newPacket(rawIpPacket, 0, rawIpPacket.length)
-      ipPacket.getHeader.getDstAddr.getHostAddress
+      new MyIpPacket(rawIpPacket).getDstIp
     } catch {
       case e: IllegalRawDataException => e.getMessage
     }
