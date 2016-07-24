@@ -1,6 +1,5 @@
 package pcap.analysers.ints.ippacketbytes
 
-import org.pcap4j.packet.{EthernetPacket, IpV4Packet}
 import pcap.analysers.Analyser
 
 trait IpIntAnalyser extends Analyser[Int] {
@@ -27,10 +26,6 @@ trait IpIntAnalyser extends Analyser[Int] {
     }
   }
 
-  def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = {
-    new MyEthernetPacket(rawEthernetPacket).getIpPacketFromPayload.getOrElse {
-      throw new NotAnIpPacketException
-    }
-  }
+  def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = new MyEthernetPacket(rawEthernetPacket).getIpPacketFromPayload
 
 }
