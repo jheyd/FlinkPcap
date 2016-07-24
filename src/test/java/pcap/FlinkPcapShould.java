@@ -33,7 +33,7 @@ public class FlinkPcapShould {
     }
 
     private DataSet<Tuple2<String, Object>> runAnalysis(Analyser analyser) throws Exception {
-        return FlinkPcap.analyseFile("testdata/200610041400_first1000.dump", 1000, analyser);
+        return FlinkPcap.analyseFile("src/test/resources/200610041400_first1000.dump", 1000, analyser);
     }
 
 }
