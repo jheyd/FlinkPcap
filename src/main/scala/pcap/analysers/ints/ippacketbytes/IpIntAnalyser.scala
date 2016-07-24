@@ -16,9 +16,9 @@ trait IpIntAnalyser extends Analyser[Int] {
     }
   }
 
-  override def value(rawEthernetPacket: Array[Byte]): Int = {
+  override def value(ethernetPacket: MyEthernetPacket): Int = {
     try {
-      val ipPacket = extractIpPacket(rawEthernetPacket)
+      val ipPacket = ethernetPacket.getIpPacketFromPayload
       ipBasedValue(ipPacket)
     } catch {
       // TODO jheyd 2016-07-24: better way to handle this?

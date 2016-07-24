@@ -7,11 +7,9 @@ abstract class Analyser[T] extends Serializable {
 
   def key(rawEthernetPacket: Array[Byte]): String
 
-  def value(rawEthernetPacket: Array[Byte]): T
-
   def key(ethernetPacket: MyEthernetPacket): String = key(ethernetPacket.rawPacket)
 
-  def value(ethernetPacket: MyEthernetPacket): T = value(ethernetPacket.rawPacket)
+  def value(ethernetPacket: MyEthernetPacket): T
 
   def aggregate(left: T, right: T): T
 
