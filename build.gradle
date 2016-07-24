@@ -25,6 +25,4 @@ dependencies{
     compile "org.pcap4j:pcap4j-packetfactory-static:1.6.4"
 
     testCompile "junit:junit:4.11"
-
-    compile files('lib/jnetpcap.jar')
 }
