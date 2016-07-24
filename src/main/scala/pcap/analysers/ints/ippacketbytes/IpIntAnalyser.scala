@@ -28,15 +28,8 @@ trait IpIntAnalyser extends Analyser[Int] {
   }
 
   def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = {
-    new MyIpPacket(extractRawIpPacket(rawEthernetPacket))
-  }
-
-  def extractRawIpPacket(rawEthernetPacket: Array[Byte]): Array[Byte] = {
-    val ethernetPacket = EthernetPacket.newPacket(rawEthernetPacket, 0, rawEthernetPacket.length)
-    val ethernetPayload = ethernetPacket.getPayload
-    ethernetPayload match {
-      case ipPacket: IpV4Packet => ipPacket.getRawData
-      case _ => throw new NotAnIpPacketException
+    new MyEthernetPacket(rawEthernetPacket).getIpPacketFromPayload.getOrElse {
+      throw new NotAnIpPacketException
     }
   }
 
