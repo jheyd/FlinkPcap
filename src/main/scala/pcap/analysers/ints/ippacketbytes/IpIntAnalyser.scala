@@ -8,9 +8,9 @@ trait IpIntAnalyser extends Analyser[Int] {
 
   def ipBasedValue(ipPacket: MyIpPacket): Int
 
-  override def key(rawEthernetPacket: Array[Byte]): String = {
+  override def key(ethernetPacket: MyEthernetPacket): String = {
     try {
-      ipBasedKey(extractIpPacket(rawEthernetPacket))
+      ipBasedKey(ethernetPacket.getIpPacketFromPayload)
     } catch {
       case e: NotAnIpPacketException => e.getMessage
     }
