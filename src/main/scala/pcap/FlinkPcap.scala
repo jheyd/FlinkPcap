@@ -29,12 +29,17 @@ object FlinkPcap {
       }
     }
 
+    val totalSizesBySrcIp: DataSet[(String, Int)] = analyseFile(filename, packetCount, analysis)
+
+    totalSizesBySrcIp.print()
+  }
+
+  def analyseFile(filename: String, packetCount: Int, analysis: Analyser[Int]): DataSet[(String, Int)] = {
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
 
     val totalSizesBySrcIp = analysePackets(ethernetPackets, analysis)
-
-    totalSizesBySrcIp.print()
+    totalSizesBySrcIp
   }
 
   def analysePackets[T: TypeInformation](ethernetPackets: DataSet[Array[Byte]], analyser: Analyser[T]): DataSet[(String, T)] = {
