@@ -4,6 +4,7 @@ import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
 import pcap.analysers.Analyser
+import pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
 import scala.collection.mutable
 
@@ -13,6 +14,7 @@ object FlinkPcap {
   implicit val typeInfo2 = TypeInformation.of(classOf[String])
   implicit val typeInfo3 = TypeInformation.of(classOf[(String, Int)])
   implicit val typeInfo4 = TypeInformation.of(classOf[Int])
+  implicit val typeInfo5 = TypeInformation.of(classOf[MyEthernetPacket])
 
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
@@ -42,9 +44,9 @@ object FlinkPcap {
     totalSizesBySrcIp
   }
 
-  def analysePackets[T: TypeInformation](ethernetPackets: DataSet[Array[Byte]], analyser: Analyser[T]): DataSet[(String, T)] = {
+  def analysePackets[T: TypeInformation](ethernetPackets: DataSet[MyEthernetPacket], analyser: Analyser[T]): DataSet[(String, T)] = {
     val grouped = ethernetPackets.groupBy(analyser.key(_))
-    implicit val typeInfo5 = TypeInformation.of(classOf[(String, T)])
+    implicit val typeInfo_ = TypeInformation.of(classOf[(String, T)])
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
       iterator
         .map(packet => (analyser.key(packet), analyser.value(packet)))
@@ -58,12 +60,12 @@ object FlinkPcap {
     totalSizesBySrcIp
   }
 
-  def readPacketsFromFile(filename: String, packetCount: Int): Seq[Array[Byte]] = {
+  def readPacketsFromFile(filename: String, packetCount: Int): Seq[MyEthernetPacket] = {
     val handle = Pcaps.openOffline(filename)
-    val packetBuffer = mutable.Buffer[Array[Byte]]()
+    val packetBuffer = mutable.Buffer[MyEthernetPacket]()
     val listener = new RawPacketListener {
       override def gotPacket(packetBytes: Array[Byte]): Unit = {
-        packetBuffer += packetBytes
+        packetBuffer += new MyEthernetPacket(packetBytes)
       }
     }
     handle.dispatch(packetCount, listener)
