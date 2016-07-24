@@ -1,6 +1,6 @@
 package pcap.analysers.ints.ippacketbytes
 
-import org.pcap4j.packet.EthernetPacket
+import org.pcap4j.packet.{EthernetPacket, IpV4Packet}
 import pcap.analysers.Analyser
 
 trait IpIntAnalyser extends Analyser[Int] {
@@ -9,9 +9,23 @@ trait IpIntAnalyser extends Analyser[Int] {
 
   def ipBasedValue(ipPacket: MyIpPacket): Int
 
-  override def key(rawEthernetPacket: Array[Byte]): String = ipBasedKey(extractIpPacket(rawEthernetPacket))
+  override def key(rawEthernetPacket: Array[Byte]): String = {
+    try {
+      ipBasedKey(extractIpPacket(rawEthernetPacket))
+    } catch {
+      case e: NotAnIpPacketException => e.getMessage
+    }
+  }
 
-  override def value(rawEthernetPacket: Array[Byte]): Int = ipBasedValue(extractIpPacket(rawEthernetPacket))
+  override def value(rawEthernetPacket: Array[Byte]): Int = {
+    try {
+      val ipPacket = extractIpPacket(rawEthernetPacket)
+      ipBasedValue(ipPacket)
+    } catch {
+      // TODO jheyd 2016-07-24: better way to handle this?
+      case e: NotAnIpPacketException => 1
+    }
+  }
 
   def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = {
     new MyIpPacket(extractRawIpPacket(rawEthernetPacket))
@@ -19,9 +33,11 @@ trait IpIntAnalyser extends Analyser[Int] {
 
   def extractRawIpPacket(rawEthernetPacket: Array[Byte]): Array[Byte] = {
     val ethernetPacket = EthernetPacket.newPacket(rawEthernetPacket, 0, rawEthernetPacket.length)
-    val rawIpPacket = ethernetPacket.getPayload.getRawData
-    rawIpPacket
+    val ethernetPayload = ethernetPacket.getPayload
+    ethernetPayload match {
+      case ipPacket: IpV4Packet => ipPacket.getRawData
+      case _ => throw new NotAnIpPacketException
+    }
   }
-
 
 }
