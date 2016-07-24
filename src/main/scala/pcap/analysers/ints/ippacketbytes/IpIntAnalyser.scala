@@ -9,9 +9,13 @@ trait IpIntAnalyser extends Analyser[Int] {
 
   def ipBasedValue(ipPacket: MyIpPacket): Int
 
-  override def key(rawEthernetPacket: Array[Byte]): String = ipBasedKey(new MyIpPacket(extractRawIpPacket(rawEthernetPacket)))
+  override def key(rawEthernetPacket: Array[Byte]): String = ipBasedKey(extractIpPacket(rawEthernetPacket))
 
-  override def value(rawEthernetPacket: Array[Byte]): Int = ipBasedValue(new MyIpPacket(extractRawIpPacket(rawEthernetPacket)))
+  override def value(rawEthernetPacket: Array[Byte]): Int = ipBasedValue(extractIpPacket(rawEthernetPacket))
+
+  def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = {
+    new MyIpPacket(extractRawIpPacket(rawEthernetPacket))
+  }
 
   def extractRawIpPacket(rawEthernetPacket: Array[Byte]): Array[Byte] = {
     val ethernetPacket = EthernetPacket.newPacket(rawEthernetPacket, 0, rawEthernetPacket.length)
