@@ -5,11 +5,11 @@ import pcap.analysers.Analyser
 
 trait IpIntAnalyser extends Analyser[Int] {
 
-  def ipBasedKey(rawIpPacket: Array[Byte]): String
+  def ipBasedKey(ipPacket: MyIpPacket): String
 
   def ipBasedValue(rawIpPacket: Array[Byte]): Int
 
-  override def key(rawEthernetPacket: Array[Byte]): String = ipBasedKey(extractRawIpPacket(rawEthernetPacket))
+  override def key(rawEthernetPacket: Array[Byte]): String = ipBasedKey(new MyIpPacket(extractRawIpPacket(rawEthernetPacket)))
 
   override def value(rawEthernetPacket: Array[Byte]): Int = ipBasedValue(extractRawIpPacket(rawEthernetPacket))
 

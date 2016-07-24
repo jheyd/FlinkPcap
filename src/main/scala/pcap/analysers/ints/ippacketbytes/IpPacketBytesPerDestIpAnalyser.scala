@@ -1,17 +1,14 @@
 package pcap.analysers.ints.ippacketbytes
 
-import org.pcap4j.packet.{IllegalRawDataException, IpV4Packet}
+import org.pcap4j.packet.IllegalRawDataException
 
 class IpPacketBytesPerDestIpAnalyser extends IpPacketBytesPerKeyAnalyser {
 
-  override def ipBasedKey(rawIpPacket: Array[Byte]): String = destIp(rawIpPacket)
-
-  def destIp(rawIpPacket: Array[Byte]): String = {
+  override def ipBasedKey(ipPacket: MyIpPacket): String = {
     try {
-      new MyIpPacket(rawIpPacket).getDstIp
+      ipPacket.getDstIp
     } catch {
       case e: IllegalRawDataException => e.getMessage
     }
   }
-
 }
