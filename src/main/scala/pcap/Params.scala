@@ -14,10 +14,10 @@ class Params(parameterTool: ParameterTool) {
 
   def inputFile: String = parameterTool.getRequired("inputFile")
 
-  def analysis: Analyser[Int] = parameterTool.getRequired("analysis") match {
-    case "bytesPerDestIp" => new IpPacketBytesPerDestIpAnalyser
-    case "bytesPerSrcIp" => new IpPacketBytesPerSrcIpAnalyser
-    case "bytesPerPorts" => new IpPacketBytesPerPortsAnalyser
+  def analysis: SetAnalyser[Int] = parameterTool.getRequired("analysis") match {
+    case "bytesPerDestIp" => new KeyValueSetAnalyser(new IpPacketBytesPerDestIpAnalyser)
+    case "bytesPerSrcIp" => new KeyValueSetAnalyser(new IpPacketBytesPerSrcIpAnalyser)
+    case "bytesPerPorts" => new KeyValueSetAnalyser(new IpPacketBytesPerPortsAnalyser)
     case other => throw new UnknownAnalysisException(other)
   }
 

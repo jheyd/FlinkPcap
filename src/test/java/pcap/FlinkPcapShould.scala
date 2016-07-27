@@ -1,16 +1,19 @@
 package pcap
 
+import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.ExecutionEnvironment
 import org.apache.flink.api.scala.DataSet
 import pcap.analysers.Analyser
 import pcap.analysers.ints.ippacketbytes.IpPacketBytesPerDestIpAnalyser
 import pcap.analysers.ints.ippacketbytes.IpPacketBytesPerPortsAnalyser
 import pcap.analysers.ints.ippacketbytes.IpPacketBytesPerSrcIpAnalyser
+
 import scala.Tuple2
 import org.junit.Assert.assertEquals
 
 class FlinkPcapShould {
   private val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
+  implicit val typeInfo1 = TypeInformation.of(classOf[Int])
 
   @org.junit.Test
   def analyzeBytesPerSrcIpFrom1000PackagesWith258ResultElements {
@@ -31,6 +34,6 @@ class FlinkPcapShould {
   }
 
   private def runAnalysis(analyser: Analyser[Int]): DataSet[(String, Int)] = {
-    FlinkPcap.analyseFile("src/test/resources/200610041400_first1000.dump", 1000, analyser)
+    FlinkPcap.analyseFile("src/test/resources/200610041400_first1000.dump", 1000, new KeyValueSetAnalyser(analyser))
   }
 }

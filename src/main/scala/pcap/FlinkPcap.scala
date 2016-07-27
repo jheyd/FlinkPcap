@@ -36,27 +36,11 @@ object FlinkPcap {
     totalSizesBySrcIp.print()
   }
 
-  def analyseFile(filename: String, packetCount: Int, analysis: Analyser[Int]): DataSet[(String, Int)] = {
+  def analyseFile(filename: String, packetCount: Int, analyser: SetAnalyser[Int]): DataSet[(String, Int)] = {
     val packetList = readPacketsFromFile(filename, packetCount)
     val ethernetPackets = env.fromCollection(packetList)
 
-    val totalSizesBySrcIp = analysePackets(ethernetPackets, analysis)
-    totalSizesBySrcIp
-  }
-
-  def analysePackets[T: TypeInformation](ethernetPackets: DataSet[MyEthernetPacket], analyser: Analyser[T]): DataSet[(String, T)] = {
-    val grouped = ethernetPackets.groupBy(analyser.key(_))
-    implicit val typeInfo_ = TypeInformation.of(classOf[(String, T)])
-    val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
-      iterator
-        .map(packet => (analyser.key(packet), analyser.value(packet)))
-        .reduce((left, right) => {
-          val (leftKey, leftValue) = left
-          val (_, rightValue) = right
-          val aggregate = analyser.aggregate(leftValue, rightValue)
-          (leftKey, aggregate)
-        })
-    })
+    val totalSizesBySrcIp = analyser.analysePackets(ethernetPackets)
     totalSizesBySrcIp
   }
 
