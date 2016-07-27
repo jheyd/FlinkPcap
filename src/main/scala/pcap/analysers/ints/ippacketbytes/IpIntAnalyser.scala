@@ -9,23 +9,18 @@ trait IpIntAnalyser extends Analyser[Int] {
   def ipBasedValue(ipPacket: MyIpPacket): Int
 
   override def key(ethernetPacket: MyEthernetPacket): String = {
-    try {
-      ipBasedKey(ethernetPacket.getIpPacketFromPayload)
-    } catch {
-      case e: NotAnIpPacketException => e.getMessage
-    }
+    ethernetPacket.getIpPacketFromPayload
+      .map(ipBasedKey(_))
+      .getOrElse("Ethernet packet payload does not contain an ip packet")
   }
 
   override def value(ethernetPacket: MyEthernetPacket): Int = {
-    try {
-      val ipPacket = ethernetPacket.getIpPacketFromPayload
-      ipBasedValue(ipPacket)
-    } catch {
+    ethernetPacket.getIpPacketFromPayload
       // TODO jheyd 2016-07-24: better way to handle this?
-      case e: NotAnIpPacketException => 1
-    }
+      .map(ipBasedValue(_))
+      .getOrElse(1)
   }
 
-  def extractIpPacket(rawEthernetPacket: Array[Byte]): MyIpPacket = new MyEthernetPacket(rawEthernetPacket).getIpPacketFromPayload
+  def extractIpPacket(rawEthernetPacket: Array[Byte]): Option[MyIpPacket] = new MyEthernetPacket(rawEthernetPacket).getIpPacketFromPayload
 
 }
