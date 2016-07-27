@@ -3,7 +3,6 @@ package pcap
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
 import org.pcap4j.core.{Pcaps, RawPacketListener}
-import pcap.analysers.Analyser
 import pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
 import scala.collection.mutable

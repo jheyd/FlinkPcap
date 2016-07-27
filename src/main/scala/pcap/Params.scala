@@ -2,8 +2,6 @@ package pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
-import pcap.analysers.Analyser
-import pcap.analysers.ints.ippacketbytes.{IpPacketBytesPerDestIpAnalyser, IpPacketBytesPerPortsAnalyser, IpPacketBytesPerSrcIpAnalyser}
 
 object Params {
   def fromArgs(args: Array[String]): Params = new Params(ParameterTool.fromArgs(args))
@@ -15,9 +13,20 @@ class Params(parameterTool: ParameterTool) {
   def inputFile: String = parameterTool.getRequired("inputFile")
 
   def analysis: SetAnalyser[Int] = parameterTool.getRequired("analysis") match {
-    case "bytesPerDestIp" => KeyValueSetAnalyser(new IpPacketBytesPerDestIpAnalyser)
-    case "bytesPerSrcIp" => KeyValueSetAnalyser(new IpPacketBytesPerSrcIpAnalyser)
-    case "bytesPerPorts" => KeyValueSetAnalyser(new IpPacketBytesPerPortsAnalyser)
+    case "bytesPerDestIp" => KeyValueSetAnalyser(
+      _.getIpPacketFromPayload.map(_.getDstIp).getOrElse("Ethernet packet payload does not contain an ip packet"),
+      _.getIpPacketFromPayload.map(_.length).getOrElse(1),
+      _ + _)
+    case "bytesPerSrcIp" => KeyValueSetAnalyser(
+      _.getIpPacketFromPayload.map(_.getSrcIp).getOrElse("Ethernet packet payload does not contain an ip packet"),
+      _.getIpPacketFromPayload.map(_.length).getOrElse(1),
+      _ + _)
+    case "bytesPerPorts" => KeyValueSetAnalyser(
+      _.getIpPacketFromPayload.map(
+        _.getPorts.getOrElse("no port information available")
+      ).getOrElse("Ethernet packet payload does not contain an ip packet"),
+      _.getIpPacketFromPayload.map(_.length).getOrElse(1),
+      _ + _)
     case other => throw new UnknownAnalysisException(other)
   }
 

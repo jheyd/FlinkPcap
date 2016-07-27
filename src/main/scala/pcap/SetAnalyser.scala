@@ -1,6 +1,5 @@
 package pcap
 
-import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.DataSet
 import pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
