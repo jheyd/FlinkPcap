@@ -34,6 +34,6 @@ class FlinkPcapShould {
   }
 
   private def runAnalysis(analyser: Analyser[Int]): DataSet[(String, Int)] = {
-    FlinkPcap.analyseFile("src/test/resources/200610041400_first1000.dump", 1000, new KeyValueSetAnalyser(analyser))
+    FlinkPcap.analyseFile("src/test/resources/200610041400_first1000.dump", 1000, KeyValueSetAnalyser(analyser))
   }
 }
