@@ -1,6 +1,6 @@
-package pcap.analysers.ints.ippacketbytes
+package berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes
 
-import pcap.analysers.Analyser
+import berlin.bbdc.inet.flink.pcap.analysers.Analyser
 
 trait IpIntAnalyser extends Analyser[Int] {
 

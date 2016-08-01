@@ -1,9 +1,9 @@
-package pcap
+package berlin.bbdc.inet.flink.pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.DataSet
-import pcap.analysers.Analyser
-import pcap.analysers.ints.ippacketbytes.MyEthernetPacket
+import berlin.bbdc.inet.flink.pcap.analysers.Analyser
+import berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
 object KeyValueSetAnalyser {
   def apply[T: TypeInformation](keyFunction: MyEthernetPacket => String, valueFunction: MyEthernetPacket => T,

@@ -1,4 +1,4 @@
-package pcap.analysers.ints.ippacketbytes
+package berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes
 
 import org.pcap4j.packet.{IpV4Packet, TcpPacket, UdpPacket}
 

@@ -1,4 +1,4 @@
-package pcap.analysers.ints.ippacketbytes
+package berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes
 
 class IpPacketBytesPerDestIpAnalyser extends IpPacketBytesPerKeyAnalyser {
 

@@ -1,4 +1,4 @@
-package pcap
+package berlin.bbdc.inet.flink.pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool

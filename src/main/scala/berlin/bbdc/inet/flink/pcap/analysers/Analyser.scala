@@ -1,6 +1,6 @@
-package pcap.analysers
+package berlin.bbdc.inet.flink.pcap.analysers
 
-import pcap.analysers.ints.ippacketbytes.MyEthernetPacket
+import berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
 // TODO Jan 2016-07-20: why does this not work as a trait?
 abstract class Analyser[T] extends Serializable {
