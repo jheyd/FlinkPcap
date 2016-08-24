@@ -1,14 +1,13 @@
 package berlin.bbdc.inet.flink.pcap
 
-import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.scala._
 
 object Params {
   def fromArgs(args: Array[String]): Params = new Params(ParameterTool.fromArgs(args))
 }
 
 class Params(parameterTool: ParameterTool) {
-  implicit val typeInfo = TypeInformation.of(classOf[Int])
 
   def inputFile: String = parameterTool.getRequired("inputFile")
 

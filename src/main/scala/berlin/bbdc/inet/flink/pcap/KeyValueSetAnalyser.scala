@@ -1,7 +1,7 @@
 package berlin.bbdc.inet.flink.pcap
 
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.scala.DataSet
+import org.apache.flink.api.scala._
 import berlin.bbdc.inet.flink.pcap.analysers.Analyser
 import berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
@@ -16,11 +16,9 @@ object KeyValueSetAnalyser {
 
 class KeyValueSetAnalyser[T: TypeInformation](keyFunction: MyEthernetPacket => String, valueFunction: MyEthernetPacket => T,
                                               aggregationFunction: (T, T) => T) extends SetAnalyser[T] with Serializable {
-  implicit val typeInfo1 = TypeInformation.of(classOf[String])
 
   def analysePackets(ethernetPackets: DataSet[MyEthernetPacket]): DataSet[(String, T)] = {
     val grouped = ethernetPackets.groupBy(keyFunction)
-    implicit val typeInfo_ = TypeInformation.of(classOf[(String, T)])
     val totalSizesBySrcIp = grouped.reduceGroup(iterator => {
       iterator
         .map(packet => (keyFunction.apply(packet), valueFunction.apply(packet)))

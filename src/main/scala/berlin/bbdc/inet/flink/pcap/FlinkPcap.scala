@@ -1,19 +1,12 @@
 package berlin.bbdc.inet.flink.pcap
 
-import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
+import org.apache.flink.api.scala._
 import org.pcap4j.core.{Pcaps, RawPacketListener}
 import berlin.bbdc.inet.flink.pcap.analysers.ints.ippacketbytes.MyEthernetPacket
 
 import scala.collection.mutable
 
 object FlinkPcap {
-
-  implicit val typeInfo1 = TypeInformation.of(classOf[Array[Byte]])
-  implicit val typeInfo2 = TypeInformation.of(classOf[String])
-  implicit val typeInfo3 = TypeInformation.of(classOf[(String, Int)])
-  implicit val typeInfo4 = TypeInformation.of(classOf[Int])
-  implicit val typeInfo5 = TypeInformation.of(classOf[MyEthernetPacket])
 
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
