@@ -5,7 +5,7 @@ sourceCompatibility='1.8'
 version = '1.0'
 ext {
     flinkVersion = "1.0.0"
-    scalaVersion = "2.11"
+    scalaVersion = "2.10"
 }
 
 repositories{
@@ -14,8 +14,8 @@ repositories{
 }
 
 dependencies{
-    compile "org.scala-lang:scala-library:2.11.8"
-    compile "org.scala-lang:scala-compiler:2.11.8"
+    compile "org.scala-lang:scala-library:2.10.6"
+    compile "org.scala-lang:scala-compiler:2.10.6"
 
     compile "org.apache.flink:flink-core:${flinkVersion}"
     compile "org.apache.flink:flink-scala_${scalaVersion}:${flinkVersion}"
