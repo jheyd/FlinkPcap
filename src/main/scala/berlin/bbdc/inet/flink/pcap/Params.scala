@@ -2,6 +2,7 @@ package berlin.bbdc.inet.flink.pcap
 
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
+import org.apache.flink.streaming.api.scala.DataStream
 
 object Params {
   def fromArgs(args: Array[String]): Params = new Params(ParameterTool.fromArgs(args))
@@ -30,4 +31,7 @@ class Params(parameterTool: ParameterTool) {
   }
 
   def packetCount: Int = parameterTool.getInt("packetCount", -1)
+
+  def outputFile: String = parameterTool.getRequired("outputFile");
+
 }

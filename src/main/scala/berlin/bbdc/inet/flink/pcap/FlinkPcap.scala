@@ -25,7 +25,9 @@ object FlinkPcap {
 
     val totalSizesBySrcIp: DataSet[(String, Int)] = analyseFile(filename, packetCount, analysis)
 
-    totalSizesBySrcIp.print()
+    totalSizesBySrcIp.writeAsText(params.outputFile)
+
+    env.execute()
   }
 
   def analyseFile(filename: String, packetCount: Int, analyser: SetAnalyser[Int]): DataSet[(String, Int)] = {
