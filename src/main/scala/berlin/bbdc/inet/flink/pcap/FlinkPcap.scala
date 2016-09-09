@@ -27,7 +27,7 @@ object FlinkPcap {
 
     totalSizesBySrcIp.writeAsText(params.outputFile)
 
-    env.execute()
+    env.execute("Flink Pcap")
   }
 
   def analyseFile(filename: String, packetCount: Int, analyser: SetAnalyser[Int]): DataSet[(String, Int)] = {
