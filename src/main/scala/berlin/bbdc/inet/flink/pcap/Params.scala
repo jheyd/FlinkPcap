@@ -6,6 +6,7 @@ import org.apache.flink.streaming.api.scala.DataStream
 
 object Params {
   def fromArgs(args: Array[String]): Params = new Params(ParameterTool.fromArgs(args))
+  def usage: String = "FlinkPcap --inputFile <filename> --outputFile <filename> --analysis <(bytesPerDestIp|bytesPerSrcIp|bytesPerPorts)> [--packetCount <Int>]"
 }
 
 class Params(parameterTool: ParameterTool) {

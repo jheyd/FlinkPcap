@@ -11,6 +11,8 @@ object FlinkPcap {
   val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
   def main(args: Array[String]) {
+    println(Params.usage)
+
     def params = Params.fromArgs(args)
     val filename = params.inputFile
     val packetCount = params.packetCount
